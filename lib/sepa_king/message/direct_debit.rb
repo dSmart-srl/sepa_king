@@ -62,7 +62,7 @@ module SEPA
               end
             end
           end
-          builder.ChrgBr('SLEV')
+          #builder.ChrgBr('SLEV')
           builder.CdtrSchmeId do
             builder.Id do
               builder.PrvtId do
