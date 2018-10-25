@@ -30,9 +30,26 @@ module SEPA
     end
   end
 
+  class CucValidator < ActiveModel::Validator
+    CUCREGEXP = /\A[a-zA-Z0-9]{8}\z/
+
+    def validate(record)
+      field_name = options[:field_name] || :cuc
+      value = record.send(field_name)
+      unless valid?(value)
+        record.errors.add(field_name, :invalid, message: options[:message])
+      end
+    end
+
+    def valid?(cuc)
+      if ok = cuc.to_s.match(CUCREGEXP) # CUC is 8 char 
+      end
+      ok
+    end
+  end
+
   class CreditorIdentifierValidator < ActiveModel::Validator
     REGEX = /\A[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|\/|\-|:|\(|\)|\.|,|']){1,28}\z/
-    CUCREGEXP = /\A[a-zA-Z0-9]{8}\z/
 
     def validate(record)
       field_name = options[:field_name] || :creditor_identifier
@@ -49,7 +66,6 @@ module SEPA
         if creditor_identifier[0..1].match(/DE/i)
           ok = creditor_identifier.length == 18
         end
-      elsif ok = creditor_identifier.to_s.match(CUCREGEXP) # CUC is 8 char 
       end
       ok
     end

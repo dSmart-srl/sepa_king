@@ -133,10 +133,10 @@ module SEPA
           builder.Id do
             builder.OrgId do
               builder.Othr do
-                builder.Id(account.creditor_identifier)
+                builder.Id(account.cuc)
               end
             end
-          end if account.respond_to? :creditor_identifier
+          end if account.respond_to? :cuc
         end
       end
     end
