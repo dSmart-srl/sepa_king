@@ -4,7 +4,7 @@ module SEPA
     include ActiveModel::Validations
     extend Converter
 
-    attr_accessor :name, :iban, :bic, :cuc
+    attr_accessor :name, :iban, :bic, :cuc, :abi
     convert :name, to: :text
 
     validates_length_of :name, within: 1..70

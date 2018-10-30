@@ -7,6 +7,7 @@ module SEPA
   PAIN_001_001_03 = 'pain.001.001.03'
   PAIN_001_002_03 = 'pain.001.002.03'
   PAIN_001_003_03 = 'pain.001.003.03'
+  SELLA_00_01_00 = 'sella'
 
   class Message
     include ActiveModel::Validations
@@ -66,6 +67,8 @@ module SEPA
           account.bic.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
         when PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02
           transactions.all? { |t| t.schema_compatible?(schema_name) }
+        when SELLA_00_01_00
+          true
       end
     end
 
@@ -134,6 +137,7 @@ module SEPA
             builder.OrgId do
               builder.Othr do
                 builder.Id(account.cuc)
+                builder.Issr('CBI')
               end
             end
           end if account.respond_to? :cuc
@@ -154,6 +158,11 @@ module SEPA
     def validate_final_document!(document, schema_name)
       xsd = Nokogiri::XML::Schema(File.read(File.expand_path("../../../lib/schema/#{schema_name}.xsd", __FILE__)))
       errors = xsd.validate(document).map { |error| error.message }
+      Rails.logger.debug '----'
+      Rails.logger.debug document.to_s
+      Rails.logger.debug '----'
+      Rails.logger.debug errors.to_s
+      Rails.logger.debug '----'
       raise SEPA::Error.new("Incompatible with schema #{schema_name}: #{errors.join(', ')}") if errors.any?
     end
   end
