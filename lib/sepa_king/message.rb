@@ -158,11 +158,6 @@ module SEPA
     def validate_final_document!(document, schema_name)
       xsd = Nokogiri::XML::Schema(File.read(File.expand_path("../../../lib/schema/#{schema_name}.xsd", __FILE__)))
       errors = xsd.validate(document).map { |error| error.message }
-      Rails.logger.debug '----'
-      Rails.logger.debug document.to_s
-      Rails.logger.debug '----'
-      Rails.logger.debug errors.to_s
-      Rails.logger.debug '----'
       raise SEPA::Error.new("Incompatible with schema #{schema_name}: #{errors.join(', ')}") if errors.any?
     end
   end
